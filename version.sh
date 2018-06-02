@@ -7,31 +7,30 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
+# 第一引数コマンドのバージョンを確認する
 command="$1"
-option="--version"
+options=("--version" "-version" "-v" "-V")
 
-case $command in
-    git|node|ruby|python|perl)
-        option="--version"
-    ;;
-    
-    java|javac|kotlin|kotlinc|scala|scalac|gradle)
-        option="-version"
-    ;;
-    
-    # python)
-    #     option="-V"
-    # ;;
-    
-    # node|ruby|perl)
-    #     option="-v"
-    # ;;
-    
-    *)
-        echo "unknown command: command"
-        echo "check some options..."
-        # 閉じるのどうする？
-    ;;
-esac
+# コマンドの存在チェック
+type $command > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "$command not found."
+    exit 1
+fi
 
-$command $option
+# ループで順に試す
+i=0
+for option in ${options[@]}; do
+    result=`$command $option 2>&1`
+    code=$?
+    if [ $code -eq 0 ]; then
+        echo "[$command $option]"
+        echo $result
+        exit 0
+    fi
+    let i++
+done
+
+# いずれのオプションでも異常終了
+echo "No suitable version option found."
+exit 1
