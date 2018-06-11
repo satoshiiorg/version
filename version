@@ -1,4 +1,8 @@
 #!/bin/bash
+# 引数で指定されたコマンドのバージョンを出力する
+
+# 以下のオプションで指定のコマンドを正常終了するまで順に実行
+options=("--version" "-version" "-v" "-V")
 
 # 引数チェック
 if [ $# -ne 1 ]; then
@@ -6,10 +10,7 @@ if [ $# -ne 1 ]; then
     echo "$0 <command>"
     exit 1
 fi
-
-# 第一引数コマンドのバージョンを確認する
 command="$1"
-options=("--version" "-version" "-v" "-V")
 
 # コマンドの存在チェック
 type $command > /dev/null 2>&1
